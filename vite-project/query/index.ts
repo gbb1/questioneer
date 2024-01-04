@@ -3,7 +3,7 @@ import { QueryClient } from "@tanstack/react-query";
 export const queryClient = new QueryClient();
 
 const PORT = 8089;
-const SERVER_URL = `http://localhost:${PORT}`;
+const SERVER_URL = `http://localhost:${PORT}/api`;
 
 export async function fetchTest({ signal }) {
   let url = SERVER_URL;

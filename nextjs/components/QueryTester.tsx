@@ -1,3 +1,4 @@
+'use client'
 import { fetchTest, queryClient } from "../query/index";
 import { useQuery, useMutation } from "@tanstack/react-query";
 

@@ -16,6 +16,13 @@ const testCreateUser = async () => {
   })
 }
 
+const findUserById = async (clerk_id) => {
+  return User.findOne({ clerk_id })
+    .then((data) => data)
+    .catch((err) => new Error(err))
+}
+
 module.exports = {
   testCreateUser,
+  findUserById,
 }

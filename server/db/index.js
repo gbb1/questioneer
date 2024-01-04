@@ -40,6 +40,7 @@ const uri = process.env.MONGO_CONNECTION_KEY
 const userSchema = new Schema({
   username: String,
   clerk_id: { type: String, unique: true },
+  games: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Lobby' }],
 })
 
 /* Answers to game questions */
@@ -74,7 +75,8 @@ const playerSchema = new Schema({
 /* Game lobby */
 const lobbySchema = new Schema({
   lobby_id: { type: String, unique: true },
-  admin: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  created: Date,
+  admin: { type: mongoose.Schema.Types.ObjectId, ref: 'User', require: [true, 'Admin required'] },
   players: [playerSchema],
   rounds: [roundSchema],
 })

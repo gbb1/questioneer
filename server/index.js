@@ -10,7 +10,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const { connectDB } = require('./db');
-const { testCreateUser } = require('./db/users.js');
+const { testCreateUser, findUserById } = require('./db/users.js');
+const { createLobby } = require('./db/lobby.js');
 
 const PORT = 8089;
 
@@ -27,7 +28,8 @@ const io = require("socket.io")(server, {
 
 io.on("connection", (socket) => {
   console.log(`a new user connected: ${socket.id.substr(0, 2)} `);
-  testCreateUser().then(() => console.log('Tested'));
+  // testCreateUser().then(() => console.log('Tested'));
+  createLobby('asdf')
 
   io.to(socket.id).emit('connection-success', socket.id);
 

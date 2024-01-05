@@ -39,6 +39,8 @@ const uri = process.env.MONGO_CONNECTION_KEY
 /* Users, to match game to auth */
 const userSchema = new Schema({
   username: String,
+  email: String,
+  created: Date,
   clerk_id: { type: String, unique: true },
   games: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Lobby' }],
 })

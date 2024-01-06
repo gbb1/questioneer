@@ -5,19 +5,9 @@ const createNewUser = async (userData) => {
 
   const newUser = await User.findOneAndUpdate(
     { clerk_id },
-    { email },
+    { email, created: new Date() },
     { upsert: true, new: true }
-  )
-
-  // return new Promise((resolve, reject) => {
-  //   const newUser = new User({
-  //     clerk_id,
-  //     email,
-  //     created: new Date(),
-  //   });
-
-  //   newUser.save().catch((err) => console.log(err));
-  // });
+  );
 };
 
 const testCreateUser = async () => {
@@ -43,8 +33,31 @@ const findUserById = async (clerk_id) => {
     .catch((err) => new Error(err));
 };
 
+const createGuest = async (userData) => {
+  const { username } = userData;
+  const unique_id = generateGuestId();
+
+  const newUser = await User.findOneAndUpdate(
+    { clerk_id: unique_id },
+    { username, created: new Date() },
+    { upsert: true, new: true }
+  );
+
+  return newUser._id;
+};
+
+const generateGuestId = () => {
+  const pattern = "xxxxxxxx";
+  return pattern.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
+    return "G-" + v.toString(16).toUpperCase();
+  });
+};
+
 module.exports = {
   testCreateUser,
   findUserById,
   createNewUser,
+  createGuest,
 };

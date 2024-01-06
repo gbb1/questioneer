@@ -32,6 +32,21 @@ const createLobby = async (clerk_id) => {
   })
 }
 
+const getLobbies = async (unique_id) => {
+  return new Promise((resolve, reject) => {
+    User.findOne({ clerk_id: unique_id }).select('lobbies')
+      .then(({ lobbies }) => {
+        return Lobby.find({ _id: { $in: lobbies }})
+      })
+      .then((lobbyData) => {
+        console.log(lobbyData)
+        resolve(lobbyData)
+      })
+      .catch((err) => reject(err))
+  })
+}
+
 module.exports = {
   createLobby,
+  getLobbies,
 }

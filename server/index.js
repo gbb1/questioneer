@@ -1,4 +1,5 @@
 const express = require("express");
+const session = require('express-session')
 
 const app = express();
 const cors = require("cors");
@@ -7,7 +8,7 @@ const morgan = require("morgan");
 
 const { connectDB } = require('./db');
 const { testCreateUser, findUserById } = require('./db/users.js');
-const { createLobby } = require('./db/lobby.js');
+const { createLobby, getLobbies } = require('./db/lobby.js');
 
 const { usersRouter } = require('./routes')
 
@@ -15,7 +16,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
+app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}))
 
 const PORT = 8089;
 
@@ -31,6 +32,7 @@ const io = require("socket.io")(server, {
   },
 });
 
+getLobbies("user_2aYhtErR5hR9vSo7Y9HDl2MZmOm")
 io.on("connection", (socket) => {
   console.log(`a new user connected: ${socket.id.substr(0, 2)} `);
   // testCreateUser().then(() => console.log('Tested'));

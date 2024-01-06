@@ -42,7 +42,7 @@ const userSchema = new Schema({
   email: String,
   created: Date,
   clerk_id: { type: String, unique: true },
-  games: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Lobby' }],
+  lobbies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Lobby' }],
 })
 
 /* Answers to game questions */
@@ -74,13 +74,18 @@ const playerSchema = new Schema({
   username: String,
 })
 
+const gameSchema = new Schema({
+  created: Date,
+  players: [playerSchema],
+  rounds: [roundSchema],
+})
+
 /* Game lobby */
 const lobbySchema = new Schema({
   lobby_id: { type: String, unique: true },
   created: Date,
   admin: { type: mongoose.Schema.Types.ObjectId, ref: 'User', require: [true, 'Admin required'] },
-  players: [playerSchema],
-  rounds: [roundSchema],
+  games: [gameSchema],
 })
 
 const User = mongoose.model('User', userSchema);

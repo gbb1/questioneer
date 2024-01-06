@@ -1,12 +1,24 @@
 const express = require('express')
 const router = express.Router();
 
-const { createNewUser } = require('../db/users.js')
+const { createNewUser, createGuest } = require('../db/users.js')
 
 router.post('/new-user', async (req, res) => {
   createNewUser(req.body)
     .then(() => {
       res.send({ action: 'User created' })
+    })
+    .catch((err) => {
+      console.log(err)
+      res.send({ action: 'Existing user' })
+    })
+})
+
+router.post('/new-guest', async (req, res) => {
+  createGuest(req.body)
+    .then((id) => {
+      res.session.id = id
+      res.send({ action: 'Guest created' })
     })
     .catch((err) => {
       console.log(err)

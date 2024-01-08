@@ -44,7 +44,20 @@ const getLobbies = async (unique_id) => {
       })
       .catch((err) => reject(err))
   })
+
 }
+
+const joinLobby = async (player_id) => {
+  return new Promise((resolve, reject) => {
+    User.findOne({ clerk_id: player_id }).select('_id')
+      .then(res => {
+        console.log(res)
+        resolve(res)
+      })
+      .catch((err) => reject(err))
+  })
+}
+
 
 module.exports = {
   createLobby,

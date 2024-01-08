@@ -10,12 +10,14 @@ interface DemoContextObj {
   items: DemoItem[];
   addItem: (value: Number, id: Number) => void;
   removeItem: (id: Number) => void;
+  username: String;
 }
 
 export const DemoContext = createContext<DemoContextObj>({
   items: [],
   addItem: (value: Number, id: Number) => {},
   removeItem: (id: Number) => {},
+  username: '',
 });
 
 const DemoContextProvider: React.FC<Props> = ({ children }) => {

@@ -46,6 +46,18 @@ const createGuest = async (userData) => {
   return newUser._id;
 };
 
+
+const setUsername = async (userData) => {
+  const { unique_id, username } = userData;
+  console.log(unique_id, username)
+  if (!username) return
+
+  const newUser = await User.findOneAndUpdate(
+    { clerk_id: unique_id },
+    { username },
+    { upsert: true, new: true })
+}
+
 const generateGuestId = () => {
   const pattern = "xxxxxxxx";
   return pattern.replace(/[xy]/g, (c) => {
@@ -60,4 +72,5 @@ module.exports = {
   findUserById,
   createNewUser,
   createGuest,
+  setUsername,
 };

@@ -22,6 +22,7 @@ const PORT = 8089;
 
 app.use('/api/users', usersRouter);
 app.get('/api', (req, res) => {
+    // res.session.id = 'Test'
     res.status(200).send({ data: "success" });
 })
 
@@ -32,7 +33,7 @@ const io = require("socket.io")(server, {
   },
 });
 
-getLobbies("user_2aYhtErR5hR9vSo7Y9HDl2MZmOm")
+// getLobbies("user_2aYhtErR5hR9vSo7Y9HDl2MZmOm")
 io.on("connection", (socket) => {
   console.log(`a new user connected: ${socket.id.substr(0, 2)} `);
   // testCreateUser().then(() => console.log('Tested'));

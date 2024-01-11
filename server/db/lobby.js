@@ -32,6 +32,34 @@ const createLobby = async (clerk_id) => {
   })
 }
 
+const createNewLobby = async (unique_id) => {
+  let lobby_id = generateLobbyId().toUpperCase();
+  let existing = await Lobby.findOne({ lobby_id })
+
+  while (existing) {
+    let lobby_id = generateLobbyId().toUpperCase();
+    let existing = await Lobby.findOne({ lobby_id })
+  }
+
+  return new Promise((resolve, reject) => {
+    findUserById(unique_id)
+      .then(async (data) => {
+
+        const newLobby = new Lobby({
+          lobby_id,
+          admin: data._id,
+          created: new Date(),
+        })
+
+        await newLobby.save()
+      })
+      .catch((err) => {
+        new Error(err)
+        console.log(err)
+      })
+  })
+}
+
 const getLobbies = async (unique_id) => {
   return new Promise((resolve, reject) => {
     User.findOne({ clerk_id: unique_id }).select('lobbies')
@@ -62,4 +90,5 @@ const joinLobby = async (player_id) => {
 module.exports = {
   createLobby,
   getLobbies,
+  createNewLobby,
 }

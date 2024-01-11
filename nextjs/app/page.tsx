@@ -5,6 +5,9 @@ import { redirect } from 'next/navigation'
 import FormBasic from '@/components/FormBasic'
 import StartForm from '@/components/StartForm'
 
+import { Form, FormControl, FormField, FormItem, FormLabel, FormDescription, FormMessage} from '@/components/ui/form'
+import { ProfileForm } from '@/components/Form'
+
 export default async function Main() {
   const { userId } = await auth()
 
@@ -29,6 +32,7 @@ export default async function Main() {
             <button className="bg-blue-600 px-4 py-2 rounded-lg text-lg">Play as guest</button>
           </Link>
         </div> */}
+        <ProfileForm />
         <StartForm />
       </div>
     </div>

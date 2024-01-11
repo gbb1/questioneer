@@ -69,3 +69,26 @@ export async function setUsername(userData:any) {
   return data;
 }
 
+export async function createLobby(userData:any) {
+
+  const response = await axios.post(
+    `http://localhost:8089/api/lobby/new-lobby`,
+    userData,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  if (!(response.statusText === 'OK')) {
+    const error = new Error("An error occurred while fetching the events");
+    error.code = response.status;
+    error.info = response.data;
+    throw error;
+  }
+
+  const { data } = response;
+
+  return data;
+}

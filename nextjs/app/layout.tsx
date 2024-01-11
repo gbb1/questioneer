@@ -12,8 +12,14 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "../query/index";
 
 import Navbar from "@/components/Navbar";
+import { Inter as FontSans } from "next/font/google";
 
-const inter = Inter({ subsets: ["latin"] });
+import { cn } from "@/lib/utils";
+
+export const fontSans = FontSans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -32,7 +38,12 @@ export default function RootLayout({
           <SocketContextProvider>
             <StoreWrapper>
               <DemoContextProvider>
-                <body className={inter.className}>
+                <body
+                  className={cn(
+                    "min-h-screen bg-background font-sans antialiased",
+                    fontSans.variable
+                  )}
+                >
                   <Navbar />
                   {children}
                 </body>

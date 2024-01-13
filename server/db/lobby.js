@@ -51,11 +51,13 @@ const createNewLobby = async (unique_id) => {
           created: new Date(),
         })
 
-        await newLobby.save()
+        const lobby = await newLobby.save()
+        resolve(lobby)
       })
       .catch((err) => {
         new Error(err)
         console.log(err)
+        reject(err)
       })
   })
 }
@@ -75,11 +77,21 @@ const getLobbies = async (unique_id) => {
 
 }
 
-const joinLobby = async (player_id) => {
+const joinLobby = async (player_id, lobby_id) => {
   return new Promise((resolve, reject) => {
+    let user_id;
     User.findOne({ clerk_id: player_id }).select('_id')
+      .then(id => {
+        console.log('found id', id)
+        user_id = id;
+        return Lobby.findOneAndUpdate({ lobby_id }, { $push: { members: id } }, { upsert: true, new: true })
+      })
+      .then((lobby) => {
+        const lobby_key = lobby._id
+        return User.findOneAndUpdate({ _id: user_id }, { $push: { lobbies: lobby_key } }, { upsert: false, new: true })
+      })
       .then(res => {
-        console.log(res)
+        console.log('res', res)
         resolve(res)
       })
       .catch((err) => reject(err))
@@ -91,4 +103,5 @@ module.exports = {
   createLobby,
   getLobbies,
   createNewLobby,
+  joinLobby,
 }

@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router();
 
-const { createNewUser, createGuest, setUsername } = require('../db/users.js')
+const { createNewUser, createGuest, setUsername, findUserById } = require('../db/users.js')
 
 router.post('/new-user', async (req, res) => {
   createNewUser(req.body)
@@ -36,6 +36,19 @@ router.post('/set-username', async (req, res) => {
     .catch((err) => {
       console.log(err)
       res.send({ action: 'Existing user' })
+    })
+})
+
+router.post('/get-data', async (req, res) => {
+  console.log(req.body)
+  findUserById(req.body.id)
+    .then((data) => {
+      // res.session.id = id
+      res.send({ data })
+    })
+    .catch((err) => {
+      console.log(err)
+      res.send({ error: err })
     })
 })
 

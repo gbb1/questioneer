@@ -16,16 +16,16 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-import { createLobby } from "@/query";
+import { createLobby, joinLobby, queryClient } from "@/query";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useUser } from "@clerk/nextjs";
 import { MouseEvent } from "react";
 
 const formSchema = z.object({
-  username: z.string().min(6, {
-    message: "Code must be 6 characters",
+  lobbyCode: z.string().min(4, {
+    message: "Code must be 4 characters",
   }).max(6, {
-    message: "Code must be 6 characters",
+    message: "Code must be 4 characters",
   }),
 });
 
@@ -35,27 +35,42 @@ export function LobbySetup() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      lobbyCode: "",
     },
   });
 
   const { mutate } = useMutation({
-    mutationFn: (userData: any) => {
+    mutationFn: async (userData: any) => {
       return createLobby(userData as any);
     },
+    onSuccess: (res) => {
+      form.setValue("lobbyCode", res.lobby?.lobby_id as string)
+    }
+  });
+
+  const { mutate:tryJoinLobby } = useMutation({
+    mutationFn: async (data:any) => {
+      const { id, lobby_id }:any = data
+      return joinLobby(id, lobby_id);
+    },
+    onSuccess: (res) => {
+      form.setValue("lobbyCode", "")
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+    }
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
+    const obj = { id: user?.id, lobby_id: form.getValues("lobbyCode") }
+    tryJoinLobby(obj)
   }
 
   const onClick = (event:MouseEvent<HTMLButtonElement>) => {
     event?.preventDefault()
     if (user) {
-      const test = mutate({ id: user.id })
-      console.log(test)
+      const result:any = mutate({ id: user.id })
+      // form.setValue("lobbyCode", result?.lobby?.lobby_id as string)
     }
   }
 
@@ -64,7 +79,7 @@ export function LobbySetup() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
-          name="username"
+          name="lobbyCode"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Play a new game</FormLabel>
@@ -72,15 +87,15 @@ export function LobbySetup() {
                 <Input placeholder="Lobby code" {...field} />
               </FormControl>
               <FormDescription>
-                This is a 6 letter code.
+                This is a 4 letter code.
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
         <div className="flex flex-row gap-2 justify-end">
-          <Button type="button" onClick={onClick}>Create game</Button>
-          <Button type="submit">Join</Button>
+          <Button type="button" disabled={form.getValues("lobbyCode").length > 0} onClick={onClick}>Create game</Button>
+          <Button type="submit" disabled={form.getValues("lobbyCode").length === 0}>Join</Button>
         </div>
       </form>
     </Form>

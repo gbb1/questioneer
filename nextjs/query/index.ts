@@ -24,6 +24,30 @@ export async function fetchTest({ signal }) {
   return data;
 }
 
+export async function getUserData({signal, userData}) {
+  const url = SERVER_URL + '/users/get-data'
+
+  const response = await axios.post(
+    url,
+    userData,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  if (!(response.statusText === 'OK')) {
+    const error = new Error("An error occurred while fetching the events");
+    error.code = response.status;
+    error.info = response.data;
+    throw error;
+  }
+
+  const { data } = response;
+
+  return data;
+}
 
 export async function createUser({ signal, userData }) {
   let ext = 'new-user'
@@ -74,6 +98,34 @@ export async function createLobby(userData:any) {
   const response = await axios.post(
     `http://localhost:8089/api/lobby/new-lobby`,
     userData,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  if (!(response.statusText === 'OK')) {
+    const error = new Error("An error occurred while fetching the events");
+    error.code = response.status;
+    error.info = response.data;
+    throw error;
+  }
+
+  const { data } = response;
+
+  return data;
+}
+
+
+export async function joinLobby(id:string, lobby_id:string) {
+
+  const response = await axios.post(
+    `http://localhost:8089/api/lobby/join-lobby`,
+    {
+      id,
+      lobby_id,
+    },
     {
       headers: {
         "Content-Type": "application/json",

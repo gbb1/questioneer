@@ -67,6 +67,13 @@ const generateGuestId = () => {
   });
 };
 
+
+// const getUserData = async (userData) => {
+//   const { id } = userData
+
+
+// }
+
 module.exports = {
   testCreateUser,
   findUserById,

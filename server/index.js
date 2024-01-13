@@ -11,6 +11,7 @@ const { testCreateUser, findUserById } = require('./db/users.js');
 const { createLobby, getLobbies } = require('./db/lobby.js');
 
 const { usersRouter, lobbyRouter } = require('./routes')
+const { createNewLobby, joinLobby } = require('./db/lobby.js')
 
 app.use(cors());
 app.use(express.json());
@@ -41,6 +42,19 @@ io.on("connection", (socket) => {
   // createLobby('asdf')
 
   io.to(socket.id).emit('connection-success', socket.id);
+
+  socket.on('join-lobby', async ({ id, lobby_id }) => {
+    joinLobby(id, lobby_id)
+      .then((data) => {
+        socket.join(lobby_id);
+        io.to(socket.id).emit('join-success', lobby_id);
+        io.to(lobby_id).emit('new-join', `${socket.id} has joined`);
+      })
+      .catch((err) => {
+        console.log(err)
+        io.to(socket.id).emit('fail', 'this lobby does not exist');
+      })
+  });
 
 });
 

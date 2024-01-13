@@ -20,6 +20,8 @@ import { createLobby, joinLobby, queryClient } from "@/query";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useUser } from "@clerk/nextjs";
 import { MouseEvent } from "react";
+import { useContext, useEffect } from "react";
+import { SocketContext } from "@/context/socketContext";
 
 const formSchema = z.object({
   lobbyCode: z.string().min(4, {
@@ -31,6 +33,7 @@ const formSchema = z.object({
 
 export function LobbySetup() {
   const { user } = useUser();
+  const { socket } = useContext(SocketContext)
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -51,7 +54,7 @@ export function LobbySetup() {
   const { mutate:tryJoinLobby } = useMutation({
     mutationFn: async (data:any) => {
       const { id, lobby_id }:any = data
-      return joinLobby(id, lobby_id);
+      return joinLobby(id, lobby_id, socket);
     },
     onSuccess: (res) => {
       form.setValue("lobbyCode", "")
@@ -62,8 +65,10 @@ export function LobbySetup() {
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    const obj = { id: user?.id, lobby_id: form.getValues("lobbyCode") }
-    tryJoinLobby(obj)
+    const code = form.getValues("lobbyCode")
+    const obj = { id: user?.id, lobby_id: code }
+    // tryJoinLobby(obj)
+    socket?.emit('join-lobby', { id: user?.id, lobby_id: code })
   }
 
   const onClick = (event:MouseEvent<HTMLButtonElement>) => {
@@ -73,6 +78,13 @@ export function LobbySetup() {
       // form.setValue("lobbyCode", result?.lobby?.lobby_id as string)
     }
   }
+
+  useEffect(() => {
+    socket?.on("join-success", (res) => {
+      console.log("joined")
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+    })
+  }, [socket])
 
   return (
     <Form {...form}>

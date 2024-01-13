@@ -29,8 +29,12 @@ const testCreateUser = async () => {
 
 const findUserById = async (clerk_id) => {
   return User.findOne({ clerk_id })
-    .then((data) => data)
-    .catch((err) => new Error(err));
+    .then(async (data) => {
+      const lobbies = await Lobby.find({ _id: { $in: data.lobbies } }).sort({ created: 'desc' })
+      data.lobbies = lobbies;
+      return data
+    })
+    .catch((err) => console.log(err));
 };
 
 const createGuest = async (userData) => {
@@ -49,7 +53,7 @@ const createGuest = async (userData) => {
 
 const setUsername = async (userData) => {
   const { unique_id, username } = userData;
-  console.log(unique_id, username)
+  // console.log(unique_id, username)
   if (!username) return
 
   const newUser = await User.findOneAndUpdate(

@@ -86,7 +86,7 @@ const lobbySchema = new Schema({
   created: Date,
   admin: { type: mongoose.Schema.Types.ObjectId, ref: 'User', require: [true, 'Admin required'] },
   games: [gameSchema],
-  members: [playerSchema],
+  members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 })
 
 const User = mongoose.model('User', userSchema);

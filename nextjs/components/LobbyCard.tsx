@@ -18,8 +18,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useContext, useEffect } from "react"
+import { SocketContext } from "@/context/socketContext"
 
-export function LobbyCard({ lobbyData }) {
+export function LobbyCard({ lobbyData, user }) {
+  const { socket } = useContext(SocketContext)
+
+  const leaveLobby = (e) => {
+    socket?.emit('leave-lobby', { id: user, lobby_id: lobbyData.lobby_id })
+  }
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -51,7 +59,7 @@ export function LobbyCard({ lobbyData }) {
         </form> */}
       {/* </CardContent> */}
       <CardFooter className="flex justify-between">
-        <Button variant="outline">Leave</Button>
+        <Button variant="outline" onClick={leaveLobby}>Leave</Button>
         <Button>Play</Button>
       </CardFooter>
     </Card>

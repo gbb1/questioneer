@@ -1,4 +1,4 @@
-'use client'
+
 import { auth, currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import axios from "axios";
@@ -19,9 +19,7 @@ const createNewGuest = async () => {
     }
   );
 
-  console.log(guestId)
-
-  redirect("/home");
+  redirect("/guest/home");
 };
 
 const NewGuest = async () => {

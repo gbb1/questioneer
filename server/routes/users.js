@@ -16,9 +16,8 @@ router.post('/new-user', async (req, res) => {
 
 router.post('/new-guest', async (req, res) => {
   createGuest(req.body)
-    .then((id) => {
-      // res.session.id = id
-      res.send({ action: 'Guest created' })
+    .then((data) => {
+      res.send(data)
     })
     .catch((err) => {
       console.log(err)

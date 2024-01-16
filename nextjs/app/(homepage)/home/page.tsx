@@ -1,46 +1,47 @@
-"use client";
-import axios from "axios";
-import QueryTester from "@/components/QueryTester";
-import { useUser } from "@clerk/nextjs";
-import { setUsername } from "@/query";
+'use client'
+import { fetchTest, getUserData } from "@/query/index";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useState, useEffect, useMemo } from "react";
 
-export default function Home() {
-  const { user } = useUser();
-  // const mutationConfig = useMemo(() => {
-  //   return {
-  //     mutationFn: (userData: any) => {
-  //       return setUsername(userData as any);
-  //     },
-  //   };
-  // }, []);
+import { LobbySetup } from "@/components/LobbySetup";
+import { useUser } from "@clerk/nextjs";
+import { useEffect, useContext } from "react";
+import { SocketContext } from "@/context/socketContext";
+import { LobbyCard } from "@/components/LobbyCard";
+import { queryClient } from "@/query/index";
+import MainPage from "@/components/MainPage";
 
-  const { mutate } = useMutation({
-    mutationFn: (userData: any) => {
-      return setUsername(userData as any);
-    },
-  });
+const UserHome = () => {
+  // const { user } = useUser();
+  // const { socket } = useContext(SocketContext)
+  // const { data, isError, isPending, isLoading, refetch } = useQuery({
+  //   queryFn: ({ signal }) => getUserData({ signal, userData: { id: user?.id }}),
+  //   enabled: !!user,
+  //   queryKey: ["user"],
+  // });
 
-  useEffect(() => {
-    let id;
-    if (!user) {
-      id = localStorage.getItem("id");
-      if (!id) return
-    }
 
-    const username = localStorage.getItem("username");
-    const userData = {
-      unique_id: user?.id || id,
-      username,
-    };
+  // useEffect(() => {
+  //   socket?.on('lobby-left', (res) => {
+  //     queryClient.invalidateQueries({ queryKey: ["user"] });
+  //   })
+  // }, [socket])
+  // // const {} = useQuery({
+  // //   queryFn: ({ signal }) => {
+  // //     return new Promise((resolve) => {
+  // //       socket?.on('joined')
+  // //     })
+  // //   }
+  // // })
 
-    mutate(userData as any);
-  }, [user, mutate]);
+  // useEffect(() => {
+  //   console.log('uSER DATA', data, user?.id)
+  //   const userData = localStorage.getItem('userData')
+  //   console.log('username', userData)
+  // }, [data, user])
 
   return (
-    <div className="w-screen h-screen flex justify-center items-center ">
-      <QueryTester />
-    </div>
-  );
+    <MainPage guest={false} />
+  )
 }
+
+export default UserHome;

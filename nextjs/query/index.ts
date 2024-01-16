@@ -50,21 +50,31 @@ export async function getUserData({signal, userData}) {
 }
 
 export async function createUser({ signal, userData }) {
+  console.log(userData)
   let ext = 'new-user'
   if (userData.guest) ext = 'new-guest'
 
-  const URL = SERVER_URL + '/' + ext
+  const URL = SERVER_URL + '/users/' + ext
 
-  const response = await fetch(URL, { userData })
+  // const response = await fetch(URL, { userData })
+  const response = await axios.post(
+    URL,
+    userData,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
 
-  if (!response.ok) {
+  if (!(response.statusText === 'OK')) {
     const error = new Error("An error occurred while fetching the events");
     error.code = response.status;
-    error.info = await response.json();
+    error.info = response?.data;
     throw error;
   }
 
-  const { data } = await response.json();
+  const { data } = response;
 
   return data;
 }
@@ -118,29 +128,30 @@ export async function createLobby(userData:any) {
 }
 
 
-export async function joinLobby(id:string, lobby_id:string) {
+export async function joinLobby(id:string, lobby_id:string, socket:any) {
 
-  const response = await axios.post(
-    `http://localhost:8089/api/lobby/join-lobby`,
-    {
-      id,
-      lobby_id,
-    },
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  socket?.emit('join-lobby', { id, lobby_id })
+  // const response = await axios.post(
+  //   `http://localhost:8089/api/lobby/join-lobby`,
+  //   {
+  //     id,
+  //     lobby_id,
+  //   },
+  //   {
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //   }
+  // );
 
-  if (!(response.statusText === 'OK')) {
-    const error = new Error("An error occurred while fetching the events");
-    error.code = response.status;
-    error.info = response.data;
-    throw error;
-  }
+  // if (!(response.statusText === 'OK')) {
+  //   const error = new Error("An error occurred while fetching the events");
+  //   error.code = response.status;
+  //   error.info = response.data;
+  //   throw error;
+  // }
 
-  const { data } = response;
+  // const { data } = response;
 
-  return data;
+  // return data;
 }

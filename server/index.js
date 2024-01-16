@@ -11,7 +11,7 @@ const { testCreateUser, findUserById } = require('./db/users.js');
 const { createLobby, getLobbies } = require('./db/lobby.js');
 
 const { usersRouter, lobbyRouter } = require('./routes')
-const { createNewLobby, joinLobby } = require('./db/lobby.js')
+const { createNewLobby, joinLobby, leaveLobby, leaveLobby2 } = require('./db/lobby.js')
 
 app.use(cors());
 app.use(express.json());
@@ -37,7 +37,7 @@ const io = require("socket.io")(server, {
 
 // getLobbies("user_2aYhtErR5hR9vSo7Y9HDl2MZmOm")
 io.on("connection", (socket) => {
-  console.log(`a new user connected: ${socket.id.substr(0, 2)} `);
+  // console.log(`a new user connected: ${socket.id.substr(0, 2)} `);
   // testCreateUser().then(() => console.log('Tested'));
   // createLobby('asdf')
 
@@ -52,9 +52,21 @@ io.on("connection", (socket) => {
       })
       .catch((err) => {
         console.log(err)
-        io.to(socket.id).emit('fail', 'this lobby does not exist');
+        io.to(socket.id).emit('error', 'this lobby does not exist');
       })
   });
+
+  socket.on('leave-lobby', async ({ id, lobby_id }) => {
+    leaveLobby2(id, lobby_id)
+      .then(() => {
+        socket.leave(lobby_id)
+        io.to(socket.id).emit('lobby-left', lobby_id)
+      })
+      .catch((err) => {
+        console.log(err)
+        io.to(socket.id).emit('error', 'this lobby does not exist');
+      })
+  })
 
 });
 

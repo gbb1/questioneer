@@ -6,22 +6,30 @@ interface Props {
   children: React.ReactNode;
 }
 
+interface SiteError {
+  message?: String,
+  title?: String,
+}
+
 interface DemoContextObj {
   items: DemoItem[];
   addItem: (value: Number, id: Number) => void;
   removeItem: (id: Number) => void;
-  username: String;
+  error: SiteError;
+  setError: (err: SiteError) => void;
 }
 
 export const DemoContext = createContext<DemoContextObj>({
   items: [],
   addItem: (value: Number, id: Number) => {},
   removeItem: (id: Number) => {},
-  username: '',
+  error: {},
+  setError: (err: SiteError) => {},
 });
 
 const DemoContextProvider: React.FC<Props> = ({ children }) => {
   const [items, setItems] = useState<DemoItem[]>([]);
+  const [error, setError] = useState<SiteError>({})
 
   useEffect(() => {
     const savedItems = localStorage.getItem("demo_data");
@@ -56,6 +64,8 @@ const DemoContextProvider: React.FC<Props> = ({ children }) => {
     items,
     addItem,
     removeItem,
+    error,
+    setError,
   };
 
   return (

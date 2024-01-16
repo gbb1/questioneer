@@ -81,10 +81,9 @@ const joinLobby = async (player_id, lobby_id) => {
   return new Promise((resolve, reject) => {
     let user_id;
     User.findOne({ clerk_id: player_id }).select('_id')
-      .then(id => {
-        console.log('found id', id)
-        user_id = id;
-        return Lobby.findOneAndUpdate({ lobby_id }, { $push: { members: id } }, { upsert: true, new: true })
+      .then(data => {
+        user_id = data._id;
+        return Lobby.findOneAndUpdate({ lobby_id }, { $push: { members: user_id } }, { upsert: true, new: true })
       })
       .then((lobby) => {
         const lobby_key = lobby._id
@@ -99,9 +98,116 @@ const joinLobby = async (player_id, lobby_id) => {
 }
 
 
+const leaveLobby = async (player_id, lobby_id) => {
+  return new Promise((resolve, reject) => {
+    let lobby_id;
+    let user_id
+    User.findOne({ clerk_id: player_id }).select('_id')
+      .then(data => {
+        console.log('player', data)
+        user_id = data._id
+        return Lobby.findOneAndUpdate({ lobby_id }, { $pull: { members: user_id } }, { upsert: true, new: true })
+      })
+      .then((lobby) => {
+        console.log('Lobby after left', lobby)
+        lobby_id = lobby._id;
+        if (lobby.members.length === 0) {
+          console.log('here', lobby_id)
+          return Lobby.deleteOne({ _id: lobby_id})
+        }
+      })
+      .then((res) => {
+        console.log(res)
+        return User.findOneAndUpdate({ _id: user_id }, { $pull: { lobbies: lobby_id }}, { upsert: true, new: true })
+      })
+      .then(res => {
+        console.log('res', res)
+        // Lobby.save()
+        // User.save()
+        resolve("deleted")
+      })
+      .catch((err) => reject(err))
+  })
+}
+
+// Lobby.deleteOne({ lobby_id: "F0DD" }).then((res) => console.log(res))
+
+Lobby.deleteMany({ members: [] }).then((res) => console.log('cleaned!', res))
+
+
+const leaveLobby2 = async (player_id, lobby_id) => {
+  return new Promise(async (resolve, reject) => {
+    // let lobby_id;
+    // let user_id
+
+  //   const lobbyIdData = await Lobby.findOneAndUpdate({ lobby_id: lobby_id }).select('_id')
+  //   console.log('1', lobbyIdData)
+  //   const userData = await User.findOneAndUpdate({ lobbies: lobbyIdData._id }, { $pullAll: { "lobbies": [lobbyIdData._id] } }, { upsert: true, new: true })
+  //   console.log('2', userData)
+  //   const lobbyAfterDelete = await Lobby.findOneAndUpdate({ _id: lobbyIdData._id }, { $pullAll: { members: [userData._id] } }, { upsert: true, new: true })
+  //   let finalRes = null
+  //   if (lobbyAfterDelete.members.length === 0) {
+  //     finalRes = await Lobby.deleteOne({ _id: lobby._id })
+  //   }
+
+  //   resolve(finalRes)
+  // })
+    Lobby.findOne({ lobby_id })
+      .then((lobby) => {
+        // console.log(lobby)
+        return User.findOneAndUpdate({ clerk_id: player_id }, { $pull: { lobbies: lobby._id } }, { new: true })
+      })
+      .then((user) => {
+        console.log(user)
+        return Lobby.findOneAndUpdate({ lobby_id }, { $pull: { members: user._id } }, { new: true } )
+      })
+      .then((lobby) => {
+        console.log(lobby)
+        if (lobby?.members?.length === 0) {
+          return Lobby.deleteOne({ _id: Lobby._id })
+        }
+      })
+      .then((res) => {
+        console.log(res)
+        resolve(res)
+      })
+      .catch((err) => reject(err))
+
+    // Lobby.findOneAndUpdate({ lobby_id: lobby_id }).select('_id')
+    //   .then((data) => {
+    //     lobby_id = data._id
+    //     console.log('lobid', data._id)
+    //     return User.findOneAndUpdate({ lobbies: data._id }, { $pull: { lobbies: data._id } }, { upsert: true, new: true })
+    //   })
+    //   .then((res) => {
+    //     user_id = res._id
+    //     console.log("user id", res._id)
+    //     return Lobby.findOneAndUpdate({ lobby_id: lobby_id }, { $pull: { members: res._id } }, { upsert: true, new: true })
+    //   })
+    //   .then(async (lobby) => {
+    //     return new Promise((resolve) => {
+    //       console.log('lobby', lobby, lobby?.members)
+    //       let out = null
+    //       if (lobby?.members?.length === 0) {
+    //          resolve(Lobby.deleteOne({ _id: lobby._id }))
+    //       } else {
+    //         resolve(out);
+    //       }
+    //     })
+    //   })
+    //   .then((res) => {
+    //     console.log('OUT', res)
+    //     resolve("deleted")
+    //   })
+    //   .catch((err) => reject(err))
+  })
+}
+
 module.exports = {
   createLobby,
   getLobbies,
   createNewLobby,
   joinLobby,
+  leaveLobby,
+  leaveLobby2,
 }

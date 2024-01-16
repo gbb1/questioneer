@@ -3,6 +3,8 @@ import { useState, useEffect, ChangeEvent } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@clerk/nextjs'
 import { redirect } from 'next/navigation'
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { createUser } from '@/query';
 
 const btn = "text-xs bg-black text-white px-4 py-3 rounded-sm flex-row flex gap-2 items-center hover:bg-green-400 transition-all justify-between"
 
@@ -21,7 +23,9 @@ const StartForm = () => {
   }
 
   useEffect(() => {
-    localStorage.setItem('username', username);
+    if (username.length > 0) {
+      localStorage.setItem('username', username);
+    }
   }, [username])
 
   useEffect(() => {
@@ -42,7 +46,7 @@ const StartForm = () => {
           </Link>
         </div>
         <div>
-          <Link href={{ pathname: href, query: { username }, }}>
+          <Link href={{ pathname: '/guest/home', query: { username }, }}>
             <button disabled={username.length === 0} className={btn}>Play as guest</button>
           </Link>
         </div>

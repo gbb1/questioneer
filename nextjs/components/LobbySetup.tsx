@@ -31,7 +31,7 @@ const formSchema = z.object({
   }),
 });
 
-export function LobbySetup() {
+export function LobbySetup({ guest, userData }) {
   const { user } = useUser();
   const { socket } = useContext(SocketContext)
   // 1. Define your form.
@@ -64,27 +64,33 @@ export function LobbySetup() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
+    console.log('clicked')
     // ✅ This will be type-safe and validated.
     const code = form.getValues("lobbyCode")
-    const obj = { id: user?.id, lobby_id: code }
+    const obj = { id: user?.id || userData.id, lobby_id: code }
     // tryJoinLobby(obj)
-    socket?.emit('join-lobby', { id: user?.id, lobby_id: code })
+    console.log('HELLO', obj)
+    socket?.emit('join-lobby', obj)
   }
 
   const onClick = (event:MouseEvent<HTMLButtonElement>) => {
     event?.preventDefault()
     if (user) {
-      const result:any = mutate({ id: user.id })
+      console.log("USER??", user)
+      const result:any = mutate({ id: user?.id })
       // form.setValue("lobbyCode", result?.lobby?.lobby_id as string)
+    } else {
+      const result:any = mutate({ id: userData?.id })
     }
   }
 
   useEffect(() => {
     socket?.on("join-success", (res) => {
       console.log("joined")
+      form.setValue("lobbyCode", "")
       queryClient.invalidateQueries({ queryKey: ["user"] });
     })
-  }, [socket])
+  }, [socket, form])
 
   return (
     <Form {...form}>
@@ -106,8 +112,8 @@ export function LobbySetup() {
           )}
         />
         <div className="flex flex-row gap-2 justify-end">
-          <Button type="button" disabled={form.getValues("lobbyCode").length > 0} onClick={onClick}>Create game</Button>
-          <Button type="submit" disabled={form.getValues("lobbyCode").length === 0}>Join</Button>
+          <Button type="button" disabled={form.getValues("lobbyCode")?.length > 0} onClick={onClick}>Create game</Button>
+          <Button type="submit" disabled={form.getValues("lobbyCode")?.length === 0}>Join</Button>
         </div>
       </form>
     </Form>

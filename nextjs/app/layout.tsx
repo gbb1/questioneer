@@ -15,6 +15,7 @@ import Navbar from "@/components/Navbar";
 import { Inter as FontSans } from "next/font/google";
 
 import { cn } from "@/lib/utils";
+import ErrorCard from "@/components/ErrorCard";
 
 export const fontSans = FontSans({
   subsets: ["latin"],
@@ -46,6 +47,7 @@ export default function RootLayout({
                 >
                   <Navbar />
                   {children}
+                  <ErrorCard />
                 </body>
               </DemoContextProvider>
             </StoreWrapper>

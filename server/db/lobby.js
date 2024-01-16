@@ -165,6 +165,8 @@ const leaveLobby2 = async (player_id, lobby_id) => {
         console.log(lobby)
         if (lobby?.members?.length === 0) {
           return Lobby.deleteOne({ _id: Lobby._id })
+        } else {
+          return Lobby.findOneAndUpdate({ _id: Lobby._id }, { admin: lobby.members[0] }, { new: true } )
         }
       })
       .then((res) => {

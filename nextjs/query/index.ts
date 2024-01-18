@@ -1,6 +1,6 @@
 'use client'
 import { QueryClient } from "@tanstack/react-query";
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 
 export const queryClient = new QueryClient();
 
@@ -22,6 +22,59 @@ export async function fetchTest({ signal }) {
   const { data } = await response.json();
 
   return data;
+}
+
+const urls = {
+  userData: '/users/get-data',
+  createUser: '/users/new-user',
+  createGuest: '/users/new-guest',
+  setUsername: '/users/set-username',
+  createLobby: '/lobby/new-lobby',
+}
+
+const handleResponse = (response:AxiosResponse) => {
+  if (!(response.statusText === 'OK')) {
+    const error = new Error("An error occurred while fetching the events");
+    error.code = response.status;
+    error.info = response.data;
+    throw error;
+  }
+
+  const { data } = response;
+
+  return data;
+}
+
+export async function apiQuery({ signal, data, endpoint }) {
+  const url = SERVER_URL + urls[endpoint]
+
+  const response = await axios.post(
+    url,
+    data,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  return handleResponse(response);
+}
+
+export async function apiMutate(data, endpoint:string) {
+  const url = SERVER_URL + urls[endpoint]
+  console.log(url)
+  const response = await axios.post(
+    SERVER_URL + urls[endpoint],
+    data,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  return handleResponse(response)
 }
 
 export async function getUserData({signal, userData}) {

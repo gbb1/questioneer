@@ -3,14 +3,16 @@ import { UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@clerk/nextjs";
-
+import { UserContext } from "@/context/userContext";
+import { useContext } from "react";
+import { Button } from "@/components/ui/button";
 // import "./navbar.css";
 
 const Navbar = () => {
-
   const { isLoaded, userId, sessionId, getToken } = useAuth();
+  const { user, setUser } = useContext(UserContext);
   let href = userId ? "/home" : "/new-user";
-
+  href = user ? "/guest/home" : "/new-user";
   // ${height > 1 ? "fade-in-shadow" : "fade-out-shadow"}
   return (
     <div
@@ -30,17 +32,13 @@ const Navbar = () => {
         [ qstneer ]
       </div>
       <div>
-        {!userId && (
+        {userId || user ? (
           <Link href={href}>
-            <button
-              className="text-xs bg-black text-white px-4 py-3
-        rounded-sm flex-row flex gap-2 items-center
-        hover:bg-green-400 transition-all justify-between"
-            >
-              Get started
-            </button>
+            <Button type="button" className="text-xs">
+              Log in
+            </Button>
           </Link>
-        )}
+        ) : null}
         <UserButton afterSignOutUrl="/" />
       </div>
     </div>

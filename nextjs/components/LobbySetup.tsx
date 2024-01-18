@@ -16,12 +16,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-import { createLobby, joinLobby, queryClient } from "@/query";
+import { createLobby, joinLobby, queryClient, apiMutate } from "@/query";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useUser } from "@clerk/nextjs";
 import { MouseEvent } from "react";
 import { useContext, useEffect } from "react";
 import { SocketContext } from "@/context/socketContext";
+import { UserContext } from "@/context/userContext";
 
 const formSchema = z.object({
   lobbyCode: z.string().min(4, {
@@ -31,9 +32,10 @@ const formSchema = z.object({
   }),
 });
 
-export function LobbySetup({ guest, userData }) {
-  const { user } = useUser();
+export function LobbySetup() {
   const { socket } = useContext(SocketContext)
+  const { user } = useContext(UserContext)
+  console.log('USER', user)
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -44,7 +46,7 @@ export function LobbySetup({ guest, userData }) {
 
   const { mutate } = useMutation({
     mutationFn: async (userData: any) => {
-      return createLobby(userData as any);
+      return apiMutate(userData as any, 'createLobby');
     },
     onSuccess: (res) => {
       form.setValue("lobbyCode", res.lobby?.lobby_id as string)
@@ -67,20 +69,21 @@ export function LobbySetup({ guest, userData }) {
     console.log('clicked')
     // ✅ This will be type-safe and validated.
     const code = form.getValues("lobbyCode")
-    const obj = { id: user?.id || userData.id, lobby_id: code }
+    const obj = { id: user?.id, lobby_id: code }
     // tryJoinLobby(obj)
-    console.log('HELLO', obj)
+    // console.log('HELLO', obj)
     socket?.emit('join-lobby', obj)
   }
 
   const onClick = (event:MouseEvent<HTMLButtonElement>) => {
     event?.preventDefault()
     if (user) {
-      console.log("USER??", user)
+      // console.log("USER??", user)
       const result:any = mutate({ id: user?.id })
       // form.setValue("lobbyCode", result?.lobby?.lobby_id as string)
     } else {
-      const result:any = mutate({ id: userData?.id })
+      // const result:any = mutate({ id: userData?.id })
+      console.log('ERROORRR')
     }
   }
 

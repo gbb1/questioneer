@@ -9,9 +9,20 @@ import { SocketContext } from "@/context/socketContext";
 import { LobbyCard } from "@/components/LobbyCard";
 import { queryClient } from "@/query/index";
 import MainPage from "@/components/MainPage";
+import { redirect } from "next/navigation";
 
 const GuestHome = () => {
   // const [userData, setUserData] = useState({})
+  const [user, setUser] = useState({})
+  useEffect(() => {
+    const userData = localStorage.getItem('userData');
+    if (userData) {
+      setUser(JSON.parse(userData))
+      console.log('userData', userData)
+    } else {
+      redirect('/')
+    }
+  }, [])
   // const { user } = useUser();
   // const { socket } = useContext(SocketContext)
   // const { data, isError, isPending, isLoading, refetch } = useQuery({

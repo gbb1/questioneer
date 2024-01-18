@@ -54,14 +54,14 @@ const createGuest = async (userData) => {
 
 
 const setUsername = async (userData) => {
-  const { unique_id, username } = userData;
+  const { id, username } = userData;
   // console.log(unique_id, username)
   if (!username) return
 
   const newUser = await User.findOneAndUpdate(
-    { clerk_id: unique_id },
+    { clerk_id: id },
     { username },
-    { upsert: true, new: true })
+    { new: true })
 }
 
 const generateGuestId = () => {

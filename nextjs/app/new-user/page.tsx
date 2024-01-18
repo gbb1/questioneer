@@ -20,20 +20,6 @@ const createNewUser = async () => {
     }
   );
 
-  // const guestId = await axios.post(
-  //   `http://localhost:8089/api/users/new-guest`,
-  //   {
-  //     username: 'test',
-  //   },
-  //   {
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //   }
-  // );
-
-  // console.log(guestId)
-
   redirect("/home");
 };
 

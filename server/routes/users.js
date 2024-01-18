@@ -17,11 +17,12 @@ router.post('/new-user', async (req, res) => {
 router.post('/new-guest', async (req, res) => {
   createGuest(req.body)
     .then((data) => {
+      console.log('data', data)
       res.send(data)
     })
     .catch((err) => {
       console.log(err)
-      res.send({ action: 'Existing user' })
+      res.send({ error: err })
     })
 })
 

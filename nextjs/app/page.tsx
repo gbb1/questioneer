@@ -3,10 +3,10 @@ import Link from 'next/link'
 import { auth } from '@clerk/nextjs'
 import { redirect } from 'next/navigation'
 import FormBasic from '@/components/FormBasic'
-import StartForm from '@/components/StartForm'
+
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormDescription, FormMessage} from '@/components/ui/form'
-import { ProfileForm } from '@/components/Form'
+import { ProfileForm } from '@/components/StartForm'
 
 export default async function Main() {
   const { userId } = await auth()
@@ -17,7 +17,7 @@ export default async function Main() {
 
   return (
     <div className="w-screen h-screen flex justify-center items-center ">
-      <div className="w-full mx-auto px-20">
+      <div className="max-w-full w-[600px] px-4">
         {/* <h1 className="text-6xl mb-4">Journal</h1>
         <p className="text-2xl text-white/60 mb-4">Journaling vibes</p> */}
         {/* <Hero /> */}
@@ -33,7 +33,6 @@ export default async function Main() {
           </Link>
         </div> */}
         <ProfileForm />
-        <StartForm />
       </div>
     </div>
   )

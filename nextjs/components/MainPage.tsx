@@ -1,5 +1,5 @@
 'use client'
-import { fetchTest, getUserData } from "@/query/index";
+import { apiQuery, fetchTest, getUserData } from "@/query/index";
 import { useQuery, useMutation } from "@tanstack/react-query";
 
 import { LobbySetup } from "@/components/LobbySetup";
@@ -8,15 +8,18 @@ import { useEffect, useContext, useState } from "react";
 import { SocketContext } from "@/context/socketContext";
 import { LobbyCard } from "@/components/LobbyCard";
 import { queryClient } from "@/query/index";
+import { UserContext } from "@/context/userContext";
+import { SetUsername } from "./SetUsername";
 
 const MainPage = ({ guest }) => {
   const [userData, setUserData] = useState({})
-  const { user } = useUser();
+  // const { user:cler } = useUser();
+  const { user, setUser } = useContext(UserContext)
 
   const { socket } = useContext(SocketContext);
   const { data, isError, isPending, isLoading, refetch } = useQuery({
-    queryFn: ({ signal }) => getUserData({ signal, userData: { id: !guest ? user?.id : userData?.id }}),
-    enabled: !guest ? !!user : !!userData?.id,
+    queryFn: ({ signal }) => apiQuery({ signal, data: { id: user?.id }, endpoint: 'userData'}),
+    enabled: !!user?.id,
     queryKey: ["user"],
   });
 
@@ -30,16 +33,15 @@ const MainPage = ({ guest }) => {
     })
   }, [socket])
 
-  useEffect(() => {
-    if (!user) {
-      const userData = localStorage.getItem('userData')
-    }
-  }, [data, user])
 
   return (
     <div className="flex flex-col justify-start pt-[50px] items-center w-full h-screen">
+      <span className="loading loading-spinner loading-sm border-2"></span>
       <div className="max-w-full px-4 w-[600px] py-10">
-        <LobbySetup guest={true} userData={userData}/>
+        <SetUsername />
+      </div>
+      <div className="max-w-full px-4 w-[600px]">
+        <LobbySetup />
       </div>
       <div className="max-w-full w-[600px] pb-10 flex flex-col gap-4 items-center justify-start px-4">
         <h1 className="w-full scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">

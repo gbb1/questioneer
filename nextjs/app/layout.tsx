@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -16,6 +17,7 @@ import { Inter as FontSans } from "next/font/google";
 
 import { cn } from "@/lib/utils";
 import ErrorCard from "@/components/ErrorCard";
+import UserContextProvider from "@/context/userContext";
 
 export const fontSans = FontSans({
   subsets: ["latin"],
@@ -39,16 +41,18 @@ export default function RootLayout({
           <SocketContextProvider>
             <StoreWrapper>
               <DemoContextProvider>
-                <body
-                  className={cn(
-                    "min-h-screen bg-background font-sans antialiased",
-                    fontSans.variable
-                  )}
-                >
-                  <Navbar />
-                  {children}
-                  <ErrorCard />
-                </body>
+                <UserContextProvider>
+                  <body
+                    className={cn(
+                      "min-h-screen bg-background font-sans antialiased",
+                      fontSans.variable
+                      )}
+                      >
+                    <Navbar />
+                    {children}
+                    <ErrorCard />
+                  </body>
+                </UserContextProvider>
               </DemoContextProvider>
             </StoreWrapper>
           </SocketContextProvider>

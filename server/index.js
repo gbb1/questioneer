@@ -44,6 +44,7 @@ io.on("connection", (socket) => {
   io.to(socket.id).emit('connection-success', socket.id);
 
   socket.on('join-lobby', async ({ id, lobby_id }) => {
+    console.log('try join', id, lobby_id)
     joinLobby(id, lobby_id)
       .then((data) => {
         socket.join(lobby_id);

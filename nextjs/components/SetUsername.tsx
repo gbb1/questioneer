@@ -38,7 +38,7 @@ export function SetUsername({ userData }: any) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: user.username,
+      username: user?.username,
     },
   });
 
@@ -80,7 +80,7 @@ export function SetUsername({ userData }: any) {
               <FormControl>
                 <Input
                   onFocus={() => setFocus(true)}
-                  placeholder={user.username}
+                  placeholder={user?.username}
                   className="w-full"
                   {...field}
                 />

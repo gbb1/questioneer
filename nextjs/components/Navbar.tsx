@@ -10,10 +10,15 @@ import { Button } from "@/components/ui/button";
 
 const Navbar = () => {
   const { isLoaded, userId, sessionId, getToken } = useAuth();
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser, setRefresh } = useContext(UserContext);
   let href = userId ? "/home" : "/new-user";
   href = user ? "/guest/home" : "/new-user";
   // ${height > 1 ? "fade-in-shadow" : "fade-out-shadow"}
+  const leaveGuest = () => {
+    localStorage.removeItem('userData')
+    setRefresh(prev => !prev)
+  }
+
   return (
     <div
       className={`
@@ -32,14 +37,19 @@ const Navbar = () => {
         [ qstneer ]
       </div>
       <div>
-        {userId || user ? (
+        {userId || user ? null : (
           <Link href={href}>
             <Button type="button" className="text-xs">
               Log in
             </Button>
           </Link>
-        ) : null}
-        <UserButton afterSignOutUrl="/" />
+        )}
+        {
+          userId ?? <UserButton afterSignOutUrl="/" />
+        }
+        {
+          user ? <Button type="button" onClick={leaveGuest}>Sign out guest</Button> : null
+        }
       </div>
     </div>
   );

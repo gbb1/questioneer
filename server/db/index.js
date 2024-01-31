@@ -60,11 +60,18 @@ const questionSchema = new Schema({
   answers: [answerSchema],
 })
 
+const scoreSchema = new Schema({
+  user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  score: Number,
+})
+
 /* Game rounds */
 const roundSchema = new Schema({
   round_number: Number,
   questions: [questionSchema],
+  scores: [scoreSchema],
 })
+
 
 /* Game players */
 const playerSchema = new Schema({
@@ -76,7 +83,7 @@ const playerSchema = new Schema({
 
 const gameSchema = new Schema({
   created: Date,
-  players: [playerSchema],
+  players: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   rounds: [roundSchema],
 })
 
@@ -91,6 +98,11 @@ const lobbySchema = new Schema({
 
 const User = mongoose.model('User', userSchema);
 const Lobby = mongoose.model('Lobby', lobbySchema);
+const Game = mongoose.model('Game', gameSchema);
+const Round = mongoose.model('Round', roundSchema);
+const Question = mongoose.model('Question', questionSchema);
+const Answer = mongoose.model('Answer', answerSchema);
+const Score = mongoose.model('Score', scoreSchema);
 
 /* --------------------------------------------------------------------- */
 
@@ -113,4 +125,9 @@ module.exports = {
   closeDB,
   Lobby,
   User,
+  Game,
+  Round,
+  Question,
+  Answer,
+  Score,
 };

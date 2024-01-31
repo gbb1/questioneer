@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select"
 import { useContext, useEffect } from "react"
 import { SocketContext } from "@/context/socketContext"
+import Link from 'next/link';
 
 export function LobbyCard({ lobbyData, user }) {
   const { socket } = useContext(SocketContext)
@@ -60,7 +61,9 @@ export function LobbyCard({ lobbyData, user }) {
       {/* </CardContent> */}
       <CardFooter className="flex justify-between">
         <Button variant="outline" onClick={leaveLobby}>Leave</Button>
-        <Button>Play</Button>
+        <Link href={`/game/${lobbyData.lobby_id}`} >
+          <Button>Play</Button>
+        </Link>
       </CardFooter>
     </Card>
   )

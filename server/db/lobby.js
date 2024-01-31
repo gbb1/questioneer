@@ -132,6 +132,25 @@ const leaveLobby = async (player_id, lobby_id) => {
 
 // Lobby.deleteOne({ lobby_id: "F0DD" }).then((res) => console.log(res))
 
+/**
+ *
+ */
+const getLobbyInfo = async (lobby_id) => {
+  const lobby = await Lobby.findOne({ lobby_id: lobby_id })
+  let promises = []
+  const members = await User.find({ _id: { $in: lobby?.members }})
+  const admin = members.find(x => x._id.toString() === lobby.admin.toString())
+
+  return {
+    members,
+    admin: {
+      username: admin?.username,
+      id: admin?.clerk_id,
+    },
+    lobby,
+  }
+}
+
 Lobby.deleteMany({ members: [] }).then((res) => console.log('cleaned!', res))
 
 
@@ -212,4 +231,5 @@ module.exports = {
   joinLobby,
   leaveLobby,
   leaveLobby2,
+  getLobbyInfo,
 }

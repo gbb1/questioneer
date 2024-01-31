@@ -18,7 +18,7 @@ router.post('/new-guest', async (req, res) => {
   createGuest(req.body)
     .then((data) => {
       console.log('data', data)
-      res.send(data)
+      res.send({...data, expiration: new Date().getTime() + (24 * 60 * 60 * 1000)})
     })
     .catch((err) => {
       console.log(err)

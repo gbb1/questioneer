@@ -11,6 +11,8 @@ import { queryClient } from "@/query/index";
 import { UserContext } from "@/context/userContext";
 import { SetUsername } from "./SetUsername";
 
+import Link from "next/link";
+
 const MainPage = ({ guest }) => {
   const [userData, setUserData] = useState({})
   // const { user:cler } = useUser();
@@ -24,8 +26,9 @@ const MainPage = ({ guest }) => {
   });
 
   useEffect(() => {
-    setUserData(JSON.parse(localStorage.getItem('userData') as any))
-  }, [])
+    // setUserData(JSON.parse(localStorage.getItem('userData') as any))
+    console.log('DATA', data)
+  }, [data])
 
   useEffect(() => {
     socket?.on('lobby-left', (res) => {
@@ -36,11 +39,11 @@ const MainPage = ({ guest }) => {
 
   return (
     <div className="flex flex-col justify-start pt-[50px] items-center w-full h-screen">
-      <span className="loading loading-spinner loading-sm border-2"></span>
+      {/* <span className="loading loading-spinner loading-sm border-2"></span> */}
       <div className="max-w-full px-4 w-[600px] py-10">
         <SetUsername />
       </div>
-      <div className="max-w-full px-4 w-[600px]">
+      <div className="max-w-full px-4 w-[600px] pb-10">
         <LobbySetup />
       </div>
       <div className="max-w-full w-[600px] pb-10 flex flex-col gap-4 items-center justify-start px-4">
@@ -48,7 +51,9 @@ const MainPage = ({ guest }) => {
           Your lobbies:
         </h1>
         {
-          data?.data?.lobbies && data?.data?.lobbies.map((lobby:any) => <div key={lobby.lobby_id} className="w-full"><LobbyCard lobbyData={lobby} user={user?.id} /></div>)
+          data?.data?.lobbies && data?.data?.lobbies.map((lobby:any) => (
+            <Link key={lobby.lobby_id} href={`/game/${lobby.lobby_id}`} className="w-full"><LobbyCard lobbyData={lobby} user={user?.id} /></Link>
+          ))
         }
       </div>
     </div>
